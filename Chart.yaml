@@ -21,10 +21,6 @@ dependencies:
     version: 0.0.4
     repository: https://decisiveai.github.io/mdai-helm-charts
     condition: mdai-api.enabled
-  - name: mdai-console
-    version: 0.2.4
-    repository: https://decisiveai.github.io/mdai-helm-charts
-    condition: mdai-console.enabled
   - name: datalyzer
     version: 0.0.6
     repository: https://decisiveai.github.io/mdai-helm-charts

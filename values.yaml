@@ -73,15 +73,6 @@ metrics-server:
   enabled: false
 mdai-api:
   enabled: false
-mdai-console:
-  enabled: true
-  fullnameOverride: mdai-console
-  service:
-    decisiveApiUrl: http://mdai-api.mdai.svc.cluster.local:8081/query
-    prometheusUrl: http://prometheus-server.mdai.svc.cluster.local:9090
-    datalyzerNamespace: mdai
-    collectorNamespace: mdai
-    decisiveEngineNamespace: mdai
 datalyzer:
   enabled: true
 mdai-operator:
