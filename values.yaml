@@ -38,10 +38,12 @@ opentelemetry-operator:
 prometheus:
   enabled: true
   alertmanager:
-    enabled: false
+    enabled: true
   configmapReload:
     prometheus:
-      enabled: false
+      enabled: true
+    alertmanager:
+      enabled: true
   kube-state-metrics:
     enabled: false
   prometheus-node-exporter:
