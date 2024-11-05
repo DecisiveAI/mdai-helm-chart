@@ -39,7 +39,8 @@ opentelemetry-operator:
 metrics-server:
   enabled: false
 mdai-api:
-  enabled: false
+  enabled: true
+  fullnameOverride: mdai-api
 mdai-console:
   enabled: true
   fullnameOverride: mdai-console
@@ -60,5 +61,5 @@ mdai-operator:
     autoGenerateCert:
       enabled: true
       certValidDays: 3650
-  cleanup: true
+  cleanup: false
   datalyzerNamespace: mdai

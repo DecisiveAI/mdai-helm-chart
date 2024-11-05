@@ -33,3 +33,4 @@ Session.vim
 **/charts/*.tgz
 
 .history
+*.backup
