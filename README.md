@@ -35,7 +35,7 @@ see `values.yaml` for other options.
 
 ## Use Cases
 
-- [Compliance and Dynamic Filtering](./usage/compliance_filtering/start_here.md)
+- [Compliance and Dynamic Filtering](./USAGE/compliance_filtering/start_here.md)
 
 *Stay tuned! More coming soon!*
 
