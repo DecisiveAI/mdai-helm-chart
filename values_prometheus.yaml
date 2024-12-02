@@ -1188,7 +1188,7 @@ kube-prometheus-stack:
   ## Flag to disable all the kubernetes component scrapers
   ##
   kubernetesServiceMonitors:
-    enabled: false
+    enabled: true
 
   ## Component scraping the kube api server
   ##
@@ -1267,7 +1267,7 @@ kube-prometheus-stack:
   ## Component scraping the kubelet and kubelet-hosted cAdvisor
   ##
   kubelet:
-    enabled: false
+    enabled: true
     namespace: kube-system
 
     serviceMonitor:
@@ -2043,11 +2043,12 @@ kube-prometheus-stack:
   ## Component scraping kube state metrics
   ##
   kubeStateMetrics:
-    enabled: false
+    enabled: true
 
   ## Configuration for kube-state-metrics subchart
   ##
   kube-state-metrics:
+    enabled: true
     namespaceOverride: ""
     rbac:
       create: true
@@ -2117,7 +2118,7 @@ kube-prometheus-stack:
   ## Deploy node exporter as a daemonset to all nodes
   ##
   nodeExporter:
-    enabled: false
+    enabled: true
     operatingSystems:
       linux:
         enabled: true
@@ -2699,7 +2700,7 @@ kube-prometheus-stack:
       ## If true, the operator will create and maintain a service for scraping kubelets
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/helm/prometheus-operator/README.md
       ##
-      enabled: false
+      enabled: true
       namespace: kube-system
       selector: ""
       ## Use '{{ template "kube-prometheus-stack.fullname" . }}-kubelet' by default
