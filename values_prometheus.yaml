@@ -578,7 +578,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## If true, a ServiceMonitor will be created for the AlertManager service.
       ##
-      selfMonitor: true
+      selfMonitor: false
 
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       ##
@@ -2048,6 +2048,7 @@ kube-prometheus-stack:
   ## Configuration for kube-state-metrics subchart
   ##
   kube-state-metrics:
+    enabled: false
     namespaceOverride: ""
     rbac:
       create: true
