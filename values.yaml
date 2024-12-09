@@ -20,12 +20,17 @@ serviceAccount:
 opentelemetry-operator:
   enabled: true
   fullnameOverride: opentelemetry-operator
+  crds:
+    create: false  
   admissionWebhooks:
     certManager:
       enabled: false
     autoGenerateCert:
       enabled: true
   manager:
+    image:
+      repository: public.ecr.aws/decisiveai/opentelemetry-operator
+      tag: 0.113.0  
     collectorImage:
       repository: otel/opentelemetry-collector-contrib
       tag: 0.112.0
@@ -55,8 +60,8 @@ mdai-operator:
       enabled: true
       certValidDays: 3650
   cleanup: false
-  datalyzerNamespace: mdai
+  datalyzerNamespace: mdai 
   controllerManager:
     manager:
       image:
-        tag: sha-5682872
+        tag: 0.1.1
