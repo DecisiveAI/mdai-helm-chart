@@ -6,19 +6,20 @@ description: MDAI Cluster helm chart
 appVersion: 0.0.5
 dependencies:
   - name: opentelemetry-operator
-    version: 0.71.2
+    version: ~0.71.2
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
     condition: opentelemetry-operator.enabled
   - name: kube-prometheus-stack
-    version: 65.3.1
+    alias: kubeprometheusstack
+    version: ~65.3.1
     repository: https://prometheus-community.github.io/helm-charts
-    condition: kube-prometheus-stack.enabled
+    condition: kubeprometheusstack.enabled
   - name: metrics-server
-    version: 3.12.1
+    version: ~3.12.1
     repository: https://kubernetes-sigs.github.io/metrics-server
     condition: metrics-server.enabled
   - name: mdai-api
-    version: 0.0.5
+    version: 0.0.6
     repository: https://decisiveai.github.io/mdai-helm-charts
     condition: mdai-api.enabled
   - name: datalyzer
@@ -27,6 +28,6 @@ dependencies:
     condition: datalyzer.enabled
   - name: mydecisive-engine-operator
     alias: mdai-operator
-    version: 0.0.17
+    version: 0.0.20
     repository: https://decisiveai.github.io/mdai-helm-charts
     condition: mdai-operator.enabled

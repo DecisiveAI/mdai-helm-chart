@@ -14,7 +14,7 @@ To fix this, you must choose what your objective is.
 
 ##### Option 1 - Disable Manged Filters and Volume measurement
 
-Verify/change the [example_collector.yaml](../../example_collector.yaml) `measureVolumes` and managed filters flag(s) are set to `false`.
+Verify/change the [example_collector.yaml](../../files/example_collector.yaml) `measureVolumes` and managed filters flag(s) are set to `false`.
 
 ```yaml
 collectors:
@@ -38,7 +38,7 @@ telemetryFiltering:
 
 ##### Option 2 - Disable Volume measurement without managed filters
 
-Verify/change the [example_collector.yaml](../../example_collector.yaml) `measureVolumes` is set to `true`, and that the managed filter flags(s) are set to `false`.
+Verify/change the [example_collector.yaml](../../files/example_collector.yaml) `measureVolumes` is set to `true`, and that the managed filter flags(s) are set to `false`.
 
 ```yaml
 collectors:
@@ -62,7 +62,7 @@ telemetryFiltering:
 
 ##### Option 3 - Enable both volume measurement and managed filters
 
-Verify/change the [example_collector.yaml](../../example_collector.yaml) `measureVolumes` and managed filter flag(s) are set to `true`.
+Verify/change the [example_collector.yaml](../../files/example_collector.yaml) `measureVolumes` and managed filter flag(s) are set to `true`.
 
 ```yaml
 collectors:

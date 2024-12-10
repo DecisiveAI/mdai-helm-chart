@@ -1,0 +1,31 @@
+{{- if .Values.defaultCollector.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: post-install-apply-manifest
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  template:
+    spec:
+      serviceAccountName: mdai-operator-controller-manager
+      containers:
+        - name: kubectl
+          image: bitnami/kubectl:1.31.3
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Applying manifest...";
+              kubectl apply -n mdai -f /manifests/manifest.yaml
+          volumeMounts:
+            - name: example-collector-manifest-volume
+              mountPath: /manifests
+              readOnly: true
+      restartPolicy: Never
+      volumes:
+        - name: example-collector-manifest-volume
+          configMap:
+            name: example-collector-manifest-config
+  backoffLimit: 3
+{{- end }}

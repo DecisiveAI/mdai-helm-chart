@@ -8,6 +8,9 @@ default:
     tolerations: []
   securityContext: {}
 
+defaultCollector:
+  enabled: false
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: false
@@ -38,13 +41,16 @@ opentelemetry-operator:
 
 metrics-server:
   enabled: false
+
 mdai-api:
   enabled: yes
   fullnameOverride: mdai-api
   image:
     tag: 0.0.3
+
 datalyzer:
   enabled: true
+
 mdai-operator:
   enabled: true
   fullnameOverride: mdai-operator
@@ -59,4 +65,263 @@ mdai-operator:
   controllerManager:
     manager:
       image:
-        tag: sha-5682872
+        tag: 0.1.1
+
+kubeprometheusstack:
+  nameOverride: kube-prometheus-stack
+  fullnameOverride: kube-prometheus-stack
+  enable: true
+  crds:
+    enabled: true
+  defaultRules:
+    create: false
+  prometheus-windows-exporter:
+    prometheus:
+      monitor:
+        enabled: false
+  alertmanager:
+    enabled: true
+    config:
+      route:
+        group_by: ["alertname", "service_name"]
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
+        receiver: 'event-handler'
+        routes:
+        - matchers:
+           - alertname = "Watchdog"
+          receiver: 'null'
+      receivers:
+      - name: 'null'
+      - name: 'event-handler'
+        webhook_configs:
+          - url: 'http://mdai-api.mdai.svc.cluster.local:8081/alerts'
+            send_resolved: true
+    serviceMonitor:
+      selfMonitor: true
+  grafana:
+    enabled: true
+    defaultDashboardsEnabled: false
+    adminPassword: mdai
+
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default:
+        mdai-dashboard: {}    # files/dashboards/mdai-dashboard.json
+        mdai-resource-use: {} # files/dashboards/mdai-resource-use.json
+        otel-collector: {}    # files/dashboards/otel-collector.json
+  serviceMonitor:
+    enabled: false
+  kubernetesServiceMonitors:
+    enabled: true
+  kubeApiServer:
+    enabled: false
+  kubelet:
+    enabled: true
+  kubeControllerManager:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+  coreDns:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+  kubeEtcd:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+  kubeScheduler:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+  kubeProxy:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+  kubeStateMetrics:
+    enabled: true
+  nodeExporter:
+    enabled: true
+  prometheus-node-exporter:
+    prometheus:
+      monitor:
+        enabled: false
+  prometheusOperator:
+    enabled: true
+    namespaces:
+      releaseNamespace: true
+    kubeletService:
+      enabled: true
+    serviceMonitor:
+      selfMonitor: false
+  prometheus:
+    serviceMonitor:
+      selfMonitor: false
+    prometheusSpec:
+      additionalArgs:
+      - name: enable-feature
+        value: exemplar-storage
+      - name: enable-feature
+        value: otlp-write-receiver
+      - name: enable-feature
+        value: promql-experimental-functions
+      image:
+        registry: quay.io
+        repository: prometheus/prometheus
+        tag: v2.54.1
+        sha: ""
+      additionalScrapeConfigs:
+        - job_name: otel-collector
+          honor_labels: true
+          tls_config:
+            insecure_skip_verify: true
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component, __meta_kubernetes_pod_annotation_prometheus_io_scrape, __meta_kubernetes_pod_container_port_number]
+              separator: ;
+              regex: opentelemetry-collector;true;8888
+              action: keep
+        - job_name: datalyzer-scrape
+          honor_labels: true
+          tls_config:
+            insecure_skip_verify: true
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component, __meta_kubernetes_pod_annotation_prometheus_io_scrape, __meta_kubernetes_pod_container_port_number]
+              separator: ;
+              regex: datalyzer;true;8888
+              action: keep
+  additionalPrometheusRulesMap:
+    mdai-rules:
+      groups:
+        - name: "k8s.rules.container_cpu_usage_seconds_total"
+          rules:
+            - expr: |
+                sum by (cluster, namespace, pod, container) (
+                  irate(container_cpu_usage_seconds_total{job="kubelet", image!=""}[5m])
+                ) * on (cluster, namespace, pod) group_left(node) topk by (cluster, namespace, pod) (
+                  1, max by(cluster, namespace, pod, node) (kube_pod_info{node!=""})
+                )
+              record: "node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate"
+        - name: "k8s.rules.container_memory_working_set_bytes"
+          rules:
+            - expr: |
+                container_memory_working_set_bytes{job="kubelet", image!=""}
+                * on (cluster, namespace, pod) group_left(node) topk by(cluster, namespace, pod) (1,
+                  max by(cluster, namespace, pod, node) (kube_pod_info{node!=""})
+                )
+              record: "node_namespace_pod_container:container_memory_working_set_bytes"
+        - name: "k8s.rules.container_memory_rss"
+          rules:
+            - expr: |
+                container_memory_rss{job="kubelet", image!=""}
+                * on (cluster, namespace, pod) group_left(node) topk by(cluster, namespace, pod) (1,
+                  max by(cluster, namespace, pod, node) (kube_pod_info{node!=""})
+                )
+              record: "node_namespace_pod_container:container_memory_rss"
+        - name: "k8s.rules.container_memory_cache"
+          rules:
+            - expr: |
+                container_memory_cache{job="kubelet", image!=""}
+                * on (cluster, namespace, pod) group_left(node) topk by(cluster, namespace, pod) (1,
+                  max by(cluster, namespace, pod, node) (kube_pod_info{node!=""})
+                )
+              record: "node_namespace_pod_container:container_memory_cache"
+        - name: "k8s.rules.container_memory_swap"
+          rules:
+            - expr: |
+                container_memory_swap{job="kubelet", image!=""}
+                * on (cluster, namespace, pod) group_left(node) topk by(cluster, namespace, pod) (1,
+                  max by(cluster, namespace, pod, node) (kube_pod_info{node!=""})
+                )
+              record: "node_namespace_pod_container:container_memory_swap"
+        - name: "k8s.rules.container_memory_requests"
+          rules:
+            - expr: |
+                kube_pod_container_resource_requests{resource="memory",job="kubelet"}  * on (namespace, pod)
+                group_left() max by (namespace, pod) (
+                  (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+                )
+              record: "cluster:namespace:pod_memory:active:kube_pod_container_resource_requests"
+            - expr: |
+                sum by (namespace) (
+                    sum by (namespace, pod) (
+                        max by (namespace, pod, container) (
+                          kube_pod_container_resource_requests{resource="memory",job="kubelet"}
+                        ) * on(namespace, pod) group_left() max by (namespace, pod) (
+                          kube_pod_status_phase{phase=~"Pending|Running"} == 1
+                        )
+                    )
+                )
+              record: "namespace_memory:kube_pod_container_resource_requests:sum"
+        - name: "k8s.rules.container_cpu_requests"
+          rules:
+            - expr: |
+                kube_pod_container_resource_requests{resource="cpu",job="kubelet"}  * on (namespace, pod)
+                group_left() max by (namespace, pod) (
+                  (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+                )
+              record: "cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests"
+            - expr: |
+                sum by (namespace) (
+                    sum by (namespace, pod) (
+                        max by (namespace, pod, container) (
+                          kube_pod_container_resource_requests{resource="cpu",job="kubelet"}
+                        ) * on(namespace, pod) group_left() max by (namespace, pod) (
+                          kube_pod_status_phase{phase=~"Pending|Running"} == 1
+                        )
+                    )
+                )
+              record: "namespace_cpu:kube_pod_container_resource_requests:sum"
+        - name: "k8s.rules.container_memory_limits"
+          rules:
+            - expr: |
+                kube_pod_container_resource_limits{resource="memory",job="kubelet"}  * on (namespace, pod)
+                group_left() max by (namespace, pod) (
+                  (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+                )
+              record: "cluster:namespace:pod_memory:active:kube_pod_container_resource_limits"
+            - expr: |
+                sum by (namespace) (
+                    sum by (namespace, pod) (
+                        max by (namespace, pod, container) (
+                          kube_pod_container_resource_limits{resource="memory",job="kubelet"}
+                        ) * on(namespace, pod) group_left() max by (namespace, pod) (
+                          kube_pod_status_phase{phase=~"Pending|Running"} == 1
+                        )
+                    )
+                )
+              record: "namespace_memory:kube_pod_container_resource_limits:sum"
+        - name: "k8s.rules.container_cpu_limits"
+          rules:
+            - expr: |
+                kube_pod_container_resource_limits{resource="cpu",job="kubelet"}  * on (namespace, pod)
+                group_left() max by (namespace, pod) (
+                (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+                )
+              record: "cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits"
+            - expr: |
+                sum by (namespace) (
+                    sum by (namespace, pod) (
+                        max by (namespace, pod, container) (
+                          kube_pod_container_resource_limits{resource="cpu",job="kubelet"}
+                        ) * on(namespace, pod) group_left() max by (namespace, pod) (
+                          kube_pod_status_phase{phase=~"Pending|Running"} == 1
+                        )
+                    )
+                )
+              record: "namespace_cpu:kube_pod_container_resource_limits:sum"

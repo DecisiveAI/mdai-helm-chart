@@ -31,5 +31,8 @@ Session.vim
 
 # Chart dependencies
 **/charts/*.tgz
+tmpcharts*
+mdai-cluster-*.tgz
 
 .history
+

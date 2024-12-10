@@ -1,0 +1,16 @@
+{{- $parent := . }}
+{{- $dashboards := .Values.kubeprometheusstack.grafana.dashboards.default }}
+{{- range $key, $value := $dashboards }}
+{{- $filePath := (printf "files/dashboards/%s.json" $key) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "grafana-dashboard-%s" $key | trunc 63 | trimSuffix "-" }}
+  namespace: {{ $parent.Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+data:
+  {{ $key }}.json: |
+    {{ $parent.Files.Get $filePath | nindent 4 }}
+{{- end }}

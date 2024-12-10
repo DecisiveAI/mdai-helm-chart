@@ -8,7 +8,7 @@ MDAI has create a construct known as, *Managed Filters*. They enable our infrast
 
 ### Where and how do I modify my managed filter?
 
-If you view the [example_collector.yaml](../../example_collector.yaml), you'll notice that there is a block in the config under filters where the filter `mute-noisy-services` is false. 
+If you view the [example_collector.yaml](../../files/example_collector.yaml), you'll notice that there is a block in the config under filters where the filter `mute-noisy-services` is false. 
 
 ```yaml
 telemetryFiltering:
@@ -33,13 +33,13 @@ telemetryFiltering:
 
 ### Enable your managed filter
 
-Let's enable the filter in [example_collector.yaml](../../example_collector.yaml) by changing `enabled: false` to `enabled: true` (approximately ln. 21).
+Let's enable the filter in [example_collector.yaml](../../files/example_collector.yaml) by changing `enabled: false` to `enabled: true` (approximately ln. 21).
 
 
 ### Update the config in your collector
 
 ```bash
-kubectl apply -f ./example_collector.yaml --namespace mdai
+kubectl apply -f ./files/example_collector.yaml --namespace mdai
 ```
 
 ### Validate

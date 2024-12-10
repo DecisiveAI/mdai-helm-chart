@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-collector-manifest-config
+  namespace: mdai
+data:
+  manifest.yaml: |
+{{ .Files.Get "files/example_collector.yaml" | indent 4 }}

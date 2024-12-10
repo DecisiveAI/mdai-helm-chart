@@ -6,7 +6,7 @@
 
 ```bash
 # add a collector definition 
-kubectl apply -f ./example_collector.yaml --namespace mdai
+kubectl apply -f ./files/example_collector.yaml --namespace mdai
 ```
 
 >Note: If you were unable to successfully run this command, see our troubleshooting guide, [collector issues](./troubleshooting.md#collector-issues).
