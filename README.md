@@ -30,6 +30,12 @@ helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --w
 helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs --set kube-prometheus-stack.crds.enabled=false --set kube-prometheus-stack.prometheusOperator.enabled=false mdai .
 ```
 
+### With Grafana GUI externally exposed
+AWS ALB managed by the AWS Load Balancer Controller will be provisioned. Plain HTTP Listener will be configured by default. See `values.yaml` `grafana.ingress.annotations` section for ALB Listener SSL configuration.
+```bash
+helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs --set kubeprometheusstack.grafana.ingress.enabled=true mdai .
+```
+
 ### Without Grafana
 ```bash
 helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs -f without_grafana.yaml mdai .
