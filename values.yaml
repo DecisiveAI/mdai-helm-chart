@@ -109,6 +109,22 @@ kubeprometheusstack:
     enabled: true
     defaultDashboardsEnabled: false
     adminPassword: mdai
+    service:
+      type: NodePort
+    ingress:
+      enabled: false
+      annotations:
+        alb.ingress.kubernetes.io/backend-protocol-version: HTTP1
+        # to enable SSL for the ALB listener, comment out next line, and uncomment
+        # next 2; replace ${SSL_CERTIFICATE_ARN} with the existing cert arn
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+        #alb.ingress.kubernetes.io/certificate-arn: '${SSL_CERTIFICATE_ARN}'
+        #alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+        alb.ingress.kubernetes.io/load-balancer-name: mdai-grafana
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/healthcheck-path: '/api/health'
+        kubernetes.io/ingress.class: alb
 
     dashboardProviders:
       dashboardproviders.yaml:
