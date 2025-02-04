@@ -100,7 +100,7 @@ spec:
               batch:
                 send_batch_size: 10000
                 timeout: 13s
-              
+
               groupbyattrs:
                 keys:
                   - service.name

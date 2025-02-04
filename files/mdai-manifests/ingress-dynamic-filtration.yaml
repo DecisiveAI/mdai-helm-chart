@@ -23,9 +23,10 @@ spec:
         annotations:
           service.beta.kubernetes.io/aws-load-balancer-name: mdai-non-grpc-endpoint
           service.beta.kubernetes.io/aws-load-balancer-type: external
+          service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
           service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
           service.beta.kubernetes.io/aws-load-balancer-scheme: internal
-          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm::${AWS_ACCOUNT_ID}:certificate/${AWS_CERT_ID}'
+          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'alb.ingress.kubernetes.io/certificate-arn: 'arn:aws:acm:${AWS_REGION}:${AWS_ACCOUNT_ID}:certificate/${AWS_CERT_ID}'
         telemetryFiltering:
           filters:
             - name: mute-noisy-services
@@ -47,7 +48,7 @@ spec:
         spec:
           ingress:
             annotations:
-              alb.ingress.kubernetes.io/certificate-arn: 'arn:aws:acm:${AWS_REGION}:${AWS_ACCOUNT_ID}:certificate/${AWS_CERT_ID}'
+              alb.ingress.kubernetes.io/certificate-arn: 'alb.ingress.kubernetes.io/certificate-arn: 'arn:aws:acm:${AWS_REGION}:${AWS_ACCOUNT_ID}:certificate/${AWS_CERT_ID}'
               alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
               alb.ingress.kubernetes.io/load-balancer-name: mdai-grpc-endpoint
               alb.ingress.kubernetes.io/backend-protocol-version: GRPC
@@ -71,16 +72,6 @@ spec:
             requests:
               cpu: "1"
               memory: 512M
-          ports:
-            - name: promexporter
-              port: 9464
-              protocol: TCP
-            - name: metrics
-              port: 8888
-              protocol: TCP
-            - name: fluentforward
-              port: 8006
-              protocol: TCP
 
           env:
             - name: MY_POD_IP
@@ -101,8 +92,6 @@ spec:
                 endpoint: '${env:MY_POD_IP}:8006'
               otlp:
                 protocols:
-                  grpc:
-                    endpoint: '${env:MY_POD_IP}:4317'
                   http:
                     endpoint: '${env:MY_POD_IP}:4318'
                     # Since this collector needs to receive data from the web, enable cors for all origins
