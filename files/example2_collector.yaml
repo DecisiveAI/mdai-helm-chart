@@ -21,11 +21,7 @@ spec:
         measureVolumes:
           enabled: true
         annotations:
-          service.beta.kubernetes.io/aws-load-balancer-name: mdai-non-grpc-endpoint
-          service.beta.kubernetes.io/aws-load-balancer-type: external
-          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-          service.beta.kubernetes.io/aws-load-balancer-scheme: internal
-          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm::${AWS_ACCOUNT_ID}:certificate/${AWS_CERT_ID}'
+          some.global.mdai.annotation: some-global-mdai-annotation-value
         telemetryFiltering:
           filters:
             - name: mute-noisy-services
@@ -54,6 +50,17 @@ spec:
               alb.ingress.kubernetes.io/scheme: internal
               alb.ingress.kubernetes.io/target-type: ip
               kubernetes.io/ingress.class: alb
+            grpcService:
+              type: NodePort
+              some.grpc.service.annotation: some-grpc-service-annotation-value
+            nonGrpcService:
+              type: LoadBalancer
+              annotations:
+                service.beta.kubernetes.io/aws-load-balancer-name: mdai-non-grpc-endpoint
+                service.beta.kubernetes.io/aws-load-balancer-type: external
+                service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+                service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+                service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm:${AWS_REGION}:${AWS_ACCOUNT}:certificate/${AWS_CERT_ARN}'
             type: aws
             collectorEndpoints:
               otlp: otlp.mdai.io
