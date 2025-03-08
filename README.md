@@ -2,30 +2,24 @@
 
 This is the official Helm chart for [MyDecisive.ai](https://www.mydecisive.ai/), an open-core solution for monitoring and managing OpenTelemetry pipelines on Kubernetes. 
 
-### After initial checkout, switching branches or modifying `Chart.yaml`, run `helm dependency update . --repository-config /dev/null`
+> After initial checkout, switching branches or modifying `Chart.yaml`, run `helm dependency update . --repository-config /dev/null`
 
-## Install MDAI
+## Prerequisites
+- Kubernetes 1.24+
+- Helm 3.9+
+- [cert-manager](https://cert-manager.io/docs/)
 
-
-### Without cert-manager
-
-To install via Helm, run the following command.
-
-```bash
-helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs mdai .
-```
-
-Alternatively, add the Helm repository first and scan for updates
-
+## Add repository
 ```bash
 helm repo add mdai https://decisiveai.github.io/mdai-helm-charts
 helm repo update
 ```
+_See [`helm repo`](https://helm.sh/docs/helm/helm_repo/) for command documentation._
 
-### With cert-manager
+## Install MDAI helm chart
 
 ```bash
-helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs --set mdai-operator.webhooks.certManager.enabled=true --set mdai-operator.webhooks.autoGenerateCert.enabled=false mdai .
+helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs mdai .
 ```
 
 ### Without Prometheus operator/CRDs
@@ -59,6 +53,15 @@ helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --w
 [Persistent storage](./PV.md)
 
 see `values.yaml` for other options.
+
+## Upgrading Chart
+
+```console
+helm upgrade [RELEASE_NAME] prometheus-community/kube-prometheus-stack
+```
+
+With Helm v3, CRDs created by this chart are not updated by default and should be manually updated.
+Consult also the [Helm Documentation on CRDs](https://helm.sh/docs/chart_best_practices/custom_resource_definitions).
 
 ## Use Cases
 

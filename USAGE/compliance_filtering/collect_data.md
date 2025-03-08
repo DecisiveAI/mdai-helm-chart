@@ -1,7 +1,5 @@
 # Start collecting data
 
-> Note: must be in `mdai` namespace with the datalyzer
-
 ## Create the collector 
 
 ```bash

@@ -48,9 +48,6 @@ opentelemetry-operator:
 metrics-server:
   enabled: false
 
-datalyzer:
-  enabled: false
-
 mdai-operator:
   enabled: true
   fullnameOverride: mdai-operator
