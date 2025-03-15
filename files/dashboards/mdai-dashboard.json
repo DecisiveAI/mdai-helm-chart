@@ -14,14 +14,6 @@
       "description": "",
       "type": "datasource",
       "pluginId": "__expr__"
-    },
-    {
-      "name": "INFINTYJSON",
-      "label": "InfintyJSON",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "yesoreyeram-infinity-datasource",
-      "pluginName": "Infinity"
     }
   ],
   "__elements": {},
@@ -78,12 +70,6 @@
       "id": "timeseries",
       "name": "Time series",
       "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "INFINTYJSON",
-      "name": "Infinity",
-      "version": "3.0.0-beta.1"
     }
   ],
   "annotations": {
@@ -331,7 +317,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum(sum by($groupByLabel) (increase($receiverMetric{data_type=\"$dataType\"}[$__rate_interval:])))",
+          "expr": "sum(sum by($groupByLabel) (increase($receiverMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:])))",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -349,7 +335,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum(sum by($groupByLabel) (increase($exporterMetric{data_type=\"$dataType\"}[$__rate_interval:])))",
+          "expr": "sum(sum by($groupByLabel) (increase($exporterMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:])))",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -562,7 +548,7 @@
           "mappings": [
             {
               "options": {
-                "unlabeled_service": {
+                "": {
                   "index": 0,
                   "text": "Other"
                 }
@@ -1087,174 +1073,6 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "INFINTYJSON"
-      },
-      "description": "MDAI OODA Loop events, actions, and collector restarts",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "left",
-            "cellOptions": {
-              "type": "auto",
-              "wrapText": false
-            },
-            "filterable": true,
-            "inspect": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Event"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 99
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Input"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 113
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 30
-      },
-      "id": 21,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "11.2.2+security-01",
-      "targets": [
-        {
-          "columns": [],
-          "datasource": {
-            "type": "yesoreyeram-infinity-datasource",
-            "uid": "INFINTYJSON"
-          },
-          "filters": [],
-          "format": "table",
-          "global_query_id": "",
-          "refId": "A",
-          "root_selector": "",
-          "source": "url",
-          "type": "json",
-          "url": "http://event-handler-webservice.mdai.svc.cluster.local:8081/events",
-          "url_options": {
-            "data": "",
-            "method": "GET"
-          }
-        }
-      ],
-      "title": "MDAI OODA Events",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Event",
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "eventName",
-                "name"
-                ],
-              "reducer": "lastNotNull"
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "eventName": true,
-              "name": true
-            },
-            "includeByName": {},
-            "indexByName": {
-              "Event": 2,
-              "eventName": 12,
-              "expression": 11,
-              "hubName": 1,
-              "metricName": 3,
-              "name": 13,
-              "operation": 6,
-              "status": 9,
-              "stored_variables": 10,
-              "target": 8,
-              "timestamp": 0,
-              "type": 7,
-              "value": 5,
-              "variable": 4
-            },
-            "renameByName": {
-              "Event": "",
-              "expression": "Expression",
-              "hubName": "Hub",
-              "metricName": "Metric",
-              "operation": "Action",
-              "operation (allValues)": "Operation",
-              "status": "Status",
-              "stored_variables": "Filtered Variables",
-              "target": "Modified",
-              "timestamp": "Timestamp",
-              "type": "Effect",
-              "type (uniqueValues)": "Action",
-              "value": "Value when triggered",
-              "value (allValues)": "Result",
-              "variable": "Input",
-              "variable (uniqueValues)": "Variable"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1306,7 +1124,9 @@
   ],
   "refresh": "5s",
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+      "mdai"
+    ],
   "templating": {
     "list": [
       {

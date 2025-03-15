@@ -1,0 +1,207 @@
+{
+    "__inputs": [
+      {
+        "name": "INFINTYJSON",
+        "label": "InfintyJSON",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "yesoreyeram-infinity-datasource",
+        "pluginName": "Infinity"
+      }
+    ],
+    "__elements": {},
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "11.2.2+security-01"
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      },
+      {
+        "type": "datasource",
+        "id": "INFINTYJSON",
+        "name": "Infinity",
+        "version": "3.0.0-beta.1"
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "MDAI audit stream showing the events, actions, and collector restarts for the MDAI evaluations and filters.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "yesoreyeram-infinity-datasource",
+          "uid": "INFINTYJSON"
+        },
+        "description": "MDAI OODA Loop events, actions, and collector restarts",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "left",
+              "cellOptions": {
+                "type": "auto",
+                "wrapText": false
+              },
+              "filterable": true,
+              "inspect": true,
+              "minWidth": 200
+            },
+            "mappings": [
+              {
+                "options": {
+                  "null": {
+                    "index": 0,
+                    "text": "n/a"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 21,
+        "options": {
+          "cellHeight": "md",
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "11.2.2+security-01",
+        "targets": [
+          {
+            "columns": [],
+            "datasource": {
+              "type": "yesoreyeram-infinity-datasource",
+              "uid": "INFINTYJSON"
+            },
+            "filters": [],
+            "format": "table",
+            "global_query_id": "",
+            "parser": "backend",
+            "refId": "A",
+            "root_selector": "",
+            "source": "url",
+            "type": "json",
+            "url": "http://event-handler-webservice.mdai.svc.cluster.local:8081/events",
+            "url_options": {
+              "data": "",
+              "method": "GET"
+            }
+          }
+        ],
+        "title": "MDAI OODA Events",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "eventName": true,
+                "name": true
+              },
+              "includeByName": {},
+              "indexByName": {
+                "context": 4,
+                "event": 1,
+                "hubName": 2,
+                "payload": 5,
+                "timestamp": 0,
+                "trigger": 3
+              },
+              "renameByName": {
+                "Event": "Event",
+                "context": "Context",
+                "event": "Event",
+                "expression": "Expression",
+                "hubName": "Hub",
+                "metricName": "Metric",
+                "operation": "Action",
+                "operation (allValues)": "Operation",
+                "payload": "Result",
+                "status": "Status",
+                "stored_variables": "Filtered Variables",
+                "target": "Modified",
+                "timestamp": "Timestamp",
+                "trigger": "Trigger",
+                "type": "Effect",
+                "type (uniqueValues)": "Action",
+                "value": "Value when triggered",
+                "value (allValues)": "Result",
+                "variable": "Input",
+                "variable (uniqueValues)": "Variable"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "schemaVersion": 39,
+    "tags": [
+      "mdai"
+    ],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "MDAI Audit Stream",
+    "uid": "fefufr0i1v474a",
+    "version": 3,
+    "weekStart": ""
+  }

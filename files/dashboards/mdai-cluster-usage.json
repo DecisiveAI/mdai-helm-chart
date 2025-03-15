@@ -2775,7 +2775,9 @@
   ],
   "refresh": "30s",
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+    "mdai"
+  ],
   "templating": {
     "list": [
       {

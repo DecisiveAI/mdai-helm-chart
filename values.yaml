@@ -119,6 +119,7 @@ kubeprometheusstack:
         mdai-resource-use: {} # files/dashboards/mdai-resource-use.json
         otel-collector: {}    # files/dashboards/otel-collector.json
         mdai-cluster-usage: {}   #files/dashboards/mdai-cluster-usage.json 
+        mdai-audit-stream: {}   #files/dashboards/mdai-audit-stream.json
   serviceMonitor:
     enabled: false
   kubernetesServiceMonitors:
