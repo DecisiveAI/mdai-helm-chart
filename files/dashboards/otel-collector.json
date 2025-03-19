@@ -1668,7 +1668,7 @@
                       "hide": false,
                       "interval": "$minstep",
                       "intervalFactor": 1,
-                      "legendFormat": "Enqueue: {{exporter}} {{service_instance_id}}",
+                      "legendFormat": "Enqueue Failed: {{exporter}} {{service_instance_id}}",
                       "range": true,
                       "refId": "B"
                     },
@@ -1684,7 +1684,7 @@
                       "hide": false,
                       "interval": "$minstep",
                       "intervalFactor": 1,
-                      "legendFormat": "Failed: {{exporter}} {{service_instance_id}}",
+                      "legendFormat": "Send Failed: {{exporter}} {{service_instance_id}}",
                       "range": true,
                       "refId": "C"
                     }
@@ -1829,7 +1829,7 @@
                       "hide": false,
                       "interval": "$minstep",
                       "intervalFactor": 1,
-                      "legendFormat": "Enqueue: {{exporter}} {{service_instance_id}}",
+                      "legendFormat": "Enqueue Failed: {{exporter}} {{service_instance_id}}",
                       "range": true,
                       "refId": "B"
                     },
@@ -1990,7 +1990,7 @@
                       "hide": false,
                       "interval": "$minstep",
                       "intervalFactor": 1,
-                      "legendFormat": "Enqueue: {{exporter}} {{service_instance_id}}",
+                      "legendFormat": "Enqueue Failed: {{exporter}} {{service_instance_id}}",
                       "range": true,
                       "refId": "B"
                     },
@@ -5151,7 +5151,7 @@
                   {
                     "auto": true,
                     "auto_count": 300,
-                    "auto_min": "10s",
+                    "auto_min": "30s",
                     "current": {
                       "selected": false,
                       "text": "auto",
@@ -5165,11 +5165,6 @@
                         "selected": true,
                         "text": "auto",
                         "value": "$__auto_interval_minstep"
-                      },
-                      {
-                        "selected": false,
-                        "text": "10s",
-                        "value": "10s"
                       },
                       {
                         "selected": false,
@@ -5187,7 +5182,7 @@
                         "value": "5m"
                       }
                     ],
-                    "query": "10s,30s,1m,5m",
+                    "query": "30s,1m,5m",
                     "queryValue": "",
                     "refresh": 2,
                     "skipUrlSync": false,
