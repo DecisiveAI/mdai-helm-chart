@@ -175,48 +175,9 @@
           "range": true,
           "refId": "A",
           "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "",
-          "hide": false,
-          "instant": false,
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "",
-          "hide": false,
-          "instant": false,
-          "range": true,
-          "refId": "C"
         }
       ],
       "title": "MDAI Total by $groupByLabel",
-      "transformations": [
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Time": {
-                "aggregations": [],
-                "operation": "aggregate"
-              },
-              "Value": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        }
-      ],
       "type": "stat"
     },
     {
@@ -712,7 +673,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by($groupByLabel) (increase($receiverMetric{data_type=\"$dataType\"}[$__rate_interval:]))",
+          "expr": "label_replace(\n  sum by ($groupByLabel) (increase($receiverMetric{data_type=\"$dataType\"}[$__rate_interval:])),\n  \"service\",\n  \"$attribute\",          \n  \"$groupByLabel\",\n  \"(.*)\"       \n)",
           "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -729,7 +690,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by($groupByLabel) (increase($receiverMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:]))",
+          "expr": "label_replace(\n  sum by($groupByLabel) (increase($receiverMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:])),\n  \"service\",\n  \"$attribute\",\n  \"$groupByLabel\",\n  \"(.*)\"\n)",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -747,7 +708,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by($groupByLabel) (increase($exporterMetric{data_type=\"$dataType\"}[$__rate_interval:]))",
+          "expr": "label_replace(\n  sum by($groupByLabel) (increase($exporterMetric{data_type=\"$dataType\"}[$__rate_interval:])),\n  \"service\",\n  \"$attribute\",\n  \"$groupByLabel\",\n  \"(.*)\"\n)",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -765,7 +726,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by($groupByLabel) (increase($exporterMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:]))",
+          "expr": "label_replace(\n  sum by($groupByLabel) (increase($exporterMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:])),\n  \"service\",\n  \"$1\",\n  \"$groupByLabel\",\n  \"(.*)\"\n)",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -835,7 +796,7 @@
                 ],
                 "operation": "aggregate"
               },
-              "service_name": {
+              "service": {
                 "aggregations": [],
                 "operation": "groupby"
               }
@@ -857,7 +818,7 @@
               "Value #Receiver Logs (sum)": "Receiver Logs",
               "Value #Sent Bytes (sum)": "Sent Bytes",
               "Value #Sent Logs (sum)": "Sent Logs",
-              "service_name": "Services"
+              "service": "Services"
             }
           }
         },
@@ -929,17 +890,8 @@
             }
           },
           "fieldMinMax": false,
-          "mappings": [
-            {
-              "options": {
-                "unlabeled_service": {
-                  "index": 0,
-                  "text": "other"
-                }
-              },
-              "type": "value"
-            }
-          ],
+          "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -955,7 +907,7 @@
           {
             "matcher": {
               "id": "byFrameRefID",
-              "options": "B"
+              "options": "received_top_talkers"
             },
             "properties": [
               {
@@ -974,7 +926,7 @@
           {
             "matcher": {
               "id": "byFrameRefID",
-              "options": "A"
+              "options": "exported_matched"
             },
             "properties": [
               {
@@ -989,13 +941,6 @@
                 }
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": []
           }
         ]
       },
@@ -1027,14 +972,14 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by($groupByLabel) (increase($exporterMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:]))",
+          "expr": "topk(2, sum by($groupByLabel) (increase($receiverMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:])))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "B",
+          "refId": "received_top_talkers",
           "useBackend": false
         },
         {
@@ -1044,20 +989,21 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by($groupByLabel) (increase($receiverMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:]))",
+          "expr": "sum by($groupByLabel) (increase($exporterMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:]))\n  and on($groupByLabel)\ntopk(2, sum by($groupByLabel) (increase($receiverMetricByBytes{data_type=\"$dataType\"}[$__rate_interval:])))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
+          "refId": "exported_matched",
           "useBackend": false
         }
       ],
       "title": "Top Talkers I/O $dataType Totals",
       "transformations": [
         {
+          "disabled": true,
           "id": "filterFieldsByName",
           "options": {
             "include": {
@@ -1276,21 +1222,21 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": "service_name",
-          "value": "service_name"
+          "selected": false,
+          "text": "",
+          "value": ""
         },
         "hide": 0,
         "label": "Group By Label",
         "name": "groupByLabel",
         "options": [
           {
-            "selected": true,
-            "text": "service_name",
-            "value": "service_name"
+            "selected": false,
+            "text": "",
+            "value": ""
           }
         ],
-        "query": "service_name",
+        "query": "",
         "skipUrlSync": false,
         "type": "textbox"
       }
