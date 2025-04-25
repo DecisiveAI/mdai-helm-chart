@@ -87,7 +87,7 @@ kubeprometheusstack:
       - name: 'null'
       - name: 'event-handler'
         webhook_configs:
-          - url: 'http://event-handler-webservice.mdai.svc.cluster.local:8081/alerts'
+          - url: 'http://event-handler-webservice.mdai.svc.cluster.local:8081/events'
             send_resolved: true
     serviceMonitor:
       selfMonitor: true
