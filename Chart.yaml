@@ -28,13 +28,13 @@ dependencies:
     condition: valkey.enabled
   - name: mdai-operator
     version: 0.1.15
-    repository: https://decisiveai.github.io/mdai-helm-charts
+    repository: file://../mdai-operator/deployment
     condition: mdai-operator.enabled
   - name: event-handler-webservice
     version: 0.0.9
-    repository: https://decisiveai.github.io/mdai-helm-charts
+    repository: file://../event-handler-webservice/deployment
     condition: event-handler-webservice.enabled
   - name: event-hub-poc
     version: 0.0.1
-    repository: https://decisiveai.github.io/mdai-helm-charts
+    repository: file://../event-hub-poc/deployment
     condition: event-hub-poc.enabled
