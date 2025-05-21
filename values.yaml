@@ -232,7 +232,7 @@ kubeprometheusstack:
               separator: ;
               regex: opentelemetry-collector;true;8888
               action: keep
-        - job_name: mdai-watcher-scrape
+        - job_name: mdai-observer-scrape
           honor_labels: true
           tls_config:
             insecure_skip_verify: true
@@ -241,9 +241,9 @@ kubeprometheusstack:
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_annotation_mdai_component_type, __meta_kubernetes_pod_annotation_prometheus_io_scrape, __meta_kubernetes_pod_container_port_number]
               separator: ;
-              regex: mdai-watcher;true;8899
+              regex: mdai-(watcher|observer);true;8899
               action: keep
-        - job_name: mdai-watcher-otel-scrape
+        - job_name: mdai-observer-otel-scrape
           honor_labels: true
           tls_config:
             insecure_skip_verify: true
@@ -252,7 +252,7 @@ kubeprometheusstack:
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_annotation_mdai_component_type, __meta_kubernetes_pod_annotation_prometheus_io_scrape, __meta_kubernetes_pod_container_port_number]
               separator: ;
-              regex: mdai-watcher;true;8888
+              regex: mdai-(watcher|observer);true;8888
               action: keep
   additionalPrometheusRulesMap:
     mdai-rules:
