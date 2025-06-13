@@ -639,8 +639,8 @@
         ]
       },
       "gridPos": {
-        "h": 16,
-        "w": 12,
+        "h": 9,
+        "w": 24,
         "x": 0,
         "y": 14
       },
@@ -797,6 +797,9 @@
                 "operation": "aggregate"
               },
               "service": {
+                "aggregations": []
+              },
+              "service_name": {
                 "aggregations": [],
                 "operation": "groupby"
               }
@@ -849,7 +852,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Total number of $dataType from top talkers $groupByLabel based on time interval for ingress and egress",
+      "description": "Total number of $dataType from top talkers $groupByLabel ingested by MDAI",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -947,10 +950,10 @@
       "gridPos": {
         "h": 16,
         "w": 12,
-        "x": 12,
-        "y": 14
+        "x": 0,
+        "y": 23
       },
-      "id": 12,
+      "id": 24,
       "options": {
         "legend": {
           "calcs": [],
@@ -981,7 +984,128 @@
           "range": true,
           "refId": "received_top_talkers",
           "useBackend": false
+        }
+      ],
+      "title": "Top Talkers Recieved $dataType Totals",
+      "transformations": [
+        {
+          "disabled": true,
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "service1234",
+                "service4321"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Total number of $dataType from top talkers $groupByLabel sent to configured destinations",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 100000,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 18,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decbytes"
         },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "exported_matched"
+            },
+            "properties": [
+              {
+                "id": "custom.axisColorMode",
+                "value": "text"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "palette-classic-by-name",
+                  "seriesBy": "last"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.2.2+security-01",
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
@@ -1000,7 +1124,7 @@
           "useBackend": false
         }
       ],
-      "title": "Top Talkers I/O $dataType Totals",
+      "title": "Top Talkers Sent $dataType Totals",
       "transformations": [
         {
           "disabled": true,
@@ -1024,7 +1148,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 39
       },
       "id": 19,
       "panels": [],
@@ -1041,7 +1165,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 40
       },
       "id": 20,
       "options": {
