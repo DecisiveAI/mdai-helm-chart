@@ -90,11 +90,6 @@ When this option is chosen, make sure existing Prometheus Operator's configurati
 Prometheus NodeExporter  installation is disabled as it's considered deployed along with the Prometheus Operator.
 
 
-### Without Grafana
-```bash
-helm upgrade --install --create-namespace --namespace mdai --cleanup-on-fail --wait-for-jobs -f without_grafana.yaml mdai .
-```
-
 ### Without cleanup on uninstall
 
 ```bash
