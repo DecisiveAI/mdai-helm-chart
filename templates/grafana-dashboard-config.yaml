@@ -1,7 +1,8 @@
 {{- $parent := . }}
-{{- $dashboards := .Values.kubeprometheusstack.grafana.dashboards.default }}
-{{- range $key, $value := $dashboards }}
-{{- $filePath := (printf "files/dashboards/%s.json" $key) }}
+{{- if and .Values.kubeprometheusstack .Values.kubeprometheusstack.grafana .Values.kubeprometheusstack.grafana.dashboards .Values.kubeprometheusstack.grafana.dashboards.default }}
+  {{- $dashboards := .Values.kubeprometheusstack.grafana.dashboards.default }}
+  {{- range $key, $value := $dashboards }}
+    {{- $filePath := (printf "files/dashboards/%s.json" $key) }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -13,4 +14,5 @@ metadata:
 data:
   {{ $key }}.json: |
     {{ $parent.Files.Get $filePath | nindent 4 }}
+  {{- end }}
 {{- end }}
