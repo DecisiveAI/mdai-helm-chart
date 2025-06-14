@@ -88,7 +88,7 @@ kubeprometheusstack:
 #    defaultDashboardsEnabled: false
 #    adminPassword: mdai
 #    plugins:
-#      - yesoreyeram-infinity-datasource  
+#      - yesoreyeram-infinity-datasource
 #    datasources:
 #      datasources.yaml:
 #        apiVersion: 1
@@ -98,7 +98,7 @@ kubeprometheusstack:
 #            type: yesoreyeram-infinity-datasource
 #            access: proxy
 #            jsonData:
-#              dataSourceType: json 
+#              dataSourceType: json
 #    dashboardProviders:
 #      dashboardproviders.yaml:
 #        apiVersion: 1
@@ -110,13 +110,13 @@ kubeprometheusstack:
 #            disableDeletion: false
 #            editable: true
 #            options:
-#              path: /var/lib/grafana/dashboards/default  
-#    dashboards:
-#      default:
+#              path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default: {} # remove the {} and uncomment the dashboards, if you want to use dashboards
 #        mdai-dashboard: {}    # files/dashboards/mdai-dashboard.json
 #        mdai-resource-use: {} # files/dashboards/mdai-resource-use.json
 #        otel-collector: {}    # files/dashboards/otel-collector.json
-#        mdai-cluster-usage: {}   #files/dashboards/mdai-cluster-usage.json 
+#        mdai-cluster-usage: {}   #files/dashboards/mdai-cluster-usage.json
 #        mdai-audit-streams: {}   #files/dashboards/mdai-audit-streams.json
 #        controller-runtime-metrics: {}   #files/dashboards/controller-runtime-metrics.json
   alertmanager:
@@ -218,7 +218,7 @@ kubeprometheusstack:
       #      resources:
       #        requests:
       #          storage: 10Gi
-      ## END: persistent storage block  
+      ## END: persistent storage block
       ruleSelectorNilUsesHelmValues: false
       additionalArgs:
       - name: enable-feature
@@ -420,7 +420,7 @@ valkey:
     #  volumeMounts:
     #  - mountPath: /data
     #    name: valkey-data
-    ## END: persistent storage block    
+    ## END: persistent storage block
     replicaCount: 1
     persistence:
       enabled: false
@@ -429,7 +429,7 @@ valkey:
       #enabled: true
       #size: 10Gi
       #existingClaim: pvc-valkey
-      ## END: persistent storage block    
+      ## END: persistent storage block
     disableCommands:
       - FLUSHDB
       - FLUSHALL
