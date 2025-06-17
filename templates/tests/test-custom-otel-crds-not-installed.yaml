@@ -1,0 +1,79 @@
+{{- if not .Values.installCustomOtelCrds }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "mdai-test-sa"
+  annotations:
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook": pre-install,pre-upgrade,test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: "mdai-test-crd-reader"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: "mdai-test-crd-reader"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+subjects:
+  - kind: ServiceAccount
+    name: "mdai-test-sa"
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: "mdai-test-crd-reader"
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "mdai-test-custom-otel-crds-absent"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  serviceAccountName: mdai-test-sa
+  restartPolicy: Never
+  containers:
+  - name: test-crds-absent
+    image: bitnami/kubectl:latest
+    command:
+    - /bin/sh
+    - -c
+    - |
+      set -e
+      echo "Testing that local OpenTelemetry CRDs are NOT installed..."
+      
+      # List of CRDs that should NOT exist (your local ones)
+      CRDS="instrumentations.opentelemetry.io opampbridges.opentelemetry.io opentelemetrycollectors.opentelemetry.io targetallocators.opentelemetry.io"
+      
+      FOUND_CRDS=0
+      for crd in $CRDS; do
+        echo "Checking that CRD does not exist: $crd"
+        if kubectl get crd "$crd"; then
+          echo "✗ CRD $crd exists but should not (local CRDs disabled)"
+          FOUND_CRDS=1
+        else
+          echo "✓ CRD $crd correctly absent"
+        fi
+      done
+      
+      if [ $FOUND_CRDS -eq 1 ]; then
+        echo "Found local CRDs when they should be disabled"
+        exit 1
+      fi
+      
+      echo "Local CRDs correctly not installed!"
+{{- end }}

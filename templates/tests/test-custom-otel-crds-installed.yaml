@@ -1,0 +1,74 @@
+{{- if .Values.installCustomOtelCrds }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "mdai-test-sa"
+  annotations:
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook": pre-install,pre-upgrade,test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: "mdai-test-crd-reader"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: "mdai-test-crd-reader"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+subjects:
+  - kind: ServiceAccount
+    name: "mdai-test-sa"
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: "mdai-test-crd-reader"
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "mdai-test-custom-otel-crds-exist"
+  annotations:
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  serviceAccountName: mdai-test-sa
+  restartPolicy: Never
+  containers:
+    - name: test-crds-exist
+      image: bitnami/kubectl:latest
+      command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Testing that OpenTelemetry CRDs exist..."
+
+          # List of CRDs that should exist (sh-compatible)
+          CRDS="instrumentations.opentelemetry.io opampbridges.opentelemetry.io opentelemetrycollectors.opentelemetry.io targetallocators.opentelemetry.io"
+
+          for crd in $CRDS; do
+            echo "Checking for CRD: $crd"
+            if kubectl get crd "$crd"; then
+              echo "✓ CRD $crd exists"
+            else
+              echo "✗ CRD $crd does not exist"
+              exit 1
+            fi
+          done
+
+          echo "All expected CRDs exist!"
+{{- end }}

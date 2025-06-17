@@ -1,0 +1,54 @@
+{{- if .Values.installCustomOtelCrds }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "mdai-test-custom-otel-crds-functionality"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-weight": "1"  # Run after CRD existence test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+  - name: test-crd-functionality
+    image: bitnami/kubectl:latest
+    command:
+    - /bin/sh
+    - -c
+    - |
+      set -e
+      echo "Testing CRD functionality by creating a test resource..."
+      
+      # Create a temporary test OpenTelemetryCollector resource
+      cat <<EOF | kubectl apply -f -
+      apiVersion: opentelemetry.io/v1alpha1
+      kind: OpenTelemetryCollector
+      metadata:
+        name: test-collector-$RANDOM
+        namespace: {{ .Release.Namespace }}
+      spec:
+        config: |
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                  endpoint: 0.0.0.0:4317
+          processors:
+            batch:
+          exporters:
+            logging:
+              loglevel: debug
+          service:
+            pipelines:
+              traces:
+                receivers: [otlp]
+                processors: [batch]
+                exporters: [logging]
+      EOF
+      
+      echo "✓ Successfully created test OpenTelemetryCollector resource"
+      echo "✓ CRDs are functional"
+      
+      # Clean up test resource
+      kubectl delete opentelemetrycollector -l "app.kubernetes.io/managed-by=Helm" -n {{ .Release.Namespace }} --ignore-not-found=true
+{{- end }}
